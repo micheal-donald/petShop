@@ -5,6 +5,39 @@
     <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.7/dist/handlebars.min.js"></script>
 </head>
 <body>
-    <h1>Hello, World!</h1>
+    <style>
+        .bold-red {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+
+    <!-- FILEPATH: /Ubuntu-22.04/home/lekim/Developer/mdGit/petShop/HTMLemailtemplate/email.html -->
+    <img src="header.png" alt="Image Example">
+    <p>Dear {{purchase.customerName}},</p>
+
+    <p>We are contacting you because there is an amount due on your <span class="bold-red">purchase</span></p>
+
+    <p><span class="bold-red">Purchase ID: {{purchase.id}}</span>:</p>
+
+    <p>According to our records, the amount due is <span class="bold-red">{{purchase.amountDue}} Kn</span>. Please click on the next button to pay this difference:</p>
+
+    <!-- Button to Pay Now -->
+    <!-- Assuming you have a URL stored in your data for the checkout page -->
+    <p><a href="{{checkoutUrl}}" target="_blank" style="background-color: red; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">PAY NOW</a></p>
+
+    <p>If you have any other concerns please contact our technical support team.</p>
+
+    <p>Kind regards,</p>
+
+    <p>Petson Team</p>
+    <script id="orders-template" type="text/x-handlebars-template">
+        {{#each orders}}
+            <div class="order">
+                <h2>Order ID: {{id}}</h2>
+                <p>Amount Due: {{amountDue}}</p>
+            </div>
+        {{/each}}
+    </script>
 </body>
 </html>
