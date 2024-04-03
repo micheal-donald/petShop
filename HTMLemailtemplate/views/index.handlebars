@@ -12,6 +12,50 @@
 
     <p><span class="bold-red">Purchase ID: {{purchase.id}}</span>:</p>
 
+<style>
+    .purchase-summary {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .purchase-summary th,
+    .purchase-summary td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    .purchase-summary th {
+        background-color: #f2f2f2;
+        text-align: left;
+    }
+</style>
+
+<table class="purchase-summary">
+    <tr>
+        <th colspan="3">Purchase Summary</th>
+    </tr>
+    <tr>
+        <td>Date:</td>
+        <td colspan="2">{{data.created_at}}</td>
+    </tr>
+    {{#each data.products}}
+    <tr>
+        <td>{{quantity}}x</td>
+        <td>{{product}}</td>
+        <td>{{price}} Kn</td>
+    </tr>
+    {{/each}}
+    <tr>
+        <td colspan="2">Total amount</td>
+        <td>{{data.amount}} Kn</td>
+    </tr>
+    <tr>
+        <td colspan="2">Amount paid</td>
+        <!-- Assuming amount paid is the same as total amount for this scenario -->
+        <td>{{data.amount}} Kn</td>
+    </tr>
+</table>
+
+
+
     <p>According to our records, the amount due is <span class="bold-red">{{purchase.amountDue}} Kn</span>. Please click on the next button to pay this difference:</p>
 
     <!-- Button to Pay Now -->
