@@ -54,7 +54,7 @@ async function loginAndGetBearerToken() {
       return undefined;
     }
   }
-  
+  //using the function
   loginAndGetBearerToken()
     .then(token => {
       if (token) {
@@ -66,7 +66,61 @@ async function loginAndGetBearerToken() {
     .catch(error => console.error(error));
 
 
-
+// Function to fetch data from the API using the bearer token
+async function getOrders(bearerToken) {
+    const url = 'https://pet-shop.buckhill.com.hr/api/v1/orders';
+    const headers = {
+      'accept': '*/*',
+      'Authorization': `Bearer ${bearerToken}`,
+      'X-CSRF-TOKEN': '', // Replace with the actual CSRF token if required
+    };
+  
+    try {
+      const response = await axios.get(url, { headers });
+  
+      if (response.status === 200) {
+        return response.data; // Assuming the orders data is in the response body
+      } else {
+        console.error('Failed to retrieve orders:', response.statusText);
+        return undefined; // Or throw an error
+      }
+    } catch (error) {
+      console.error('Error during order retrieval:', error);
+      return undefined; // Or throw an error
+    }
+  }
+  
+//   (async () => {
+//     try {
+//       const token = await loginAndGetBearerToken(); // Get the bearer token
+//       const orders = await getOrders(token);
+//       //console.log(orders); // The retrieved orders data
+//       const mostRecentOrder = orders.data[0];
+//       //get most recent uid
+//         console.log('Most recent order:', mostRecentOrder.uuid);
+//     } catch (error) {
+//       console.error('Error:', error);
+//     }
+//   })();
+async function getMostRecentOrderUUID() {
+    try {
+      const token = await loginAndGetBearerToken(); // Get the bearer token
+      const orders = await getOrders(token);
+  
+      const mostRecentOrder = orders.data[0]; // Assuming newest first in 'data' array
+  
+      if (mostRecentOrder) {
+        return mostRecentOrder.uuid; // Return the UUID of the most recent order
+      } else {
+        console.error("No orders found in the data.");
+        return null; // Or throw an error if appropriate
+      }
+    } catch (error) {
+      console.error('Error retrieving most recent order:', error);
+      throw error; // Re-throw the error for handling outside the function
+    }
+  }
+  
 // Function to fetch data from the API using the bearer token
 async function getOrderData(uuid, token) {
     try {
@@ -91,6 +145,7 @@ async function getOrderData(uuid, token) {
 }
 
 // Express route handler
+
 app.get('/', async (req, res) => {
     try {
         const token = await loginAndGetBearerToken();
@@ -100,7 +155,8 @@ app.get('/', async (req, res) => {
         }
 
         // Use a valid UUID for an order
-        const orderUuid = '3bea3cf0-e41c-3e65-ae7a-a906ae4c0e6b';
+        //const orderUuid = '3bea3cf0-e41c-3e65-ae7a-a906ae4c0e6b';
+        const orderUuid = await getMostRecentOrderUUID();
         const orderData = await getOrderData(orderUuid, token);
 
         if (!orderData) {
