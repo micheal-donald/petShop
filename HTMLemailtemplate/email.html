@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Email Template</title>
-    <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.7/dist/handlebars.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.8/dist/cjs/handlebars.min.js"></script>
 </head>
 <body>
     <style>
@@ -33,11 +33,40 @@
     <p>Petson Team</p>
     <script id="orders-template" type="text/x-handlebars-template">
         {{#each orders}}
-            <div class="order">
+            <div class="orders-container">
                 <h2>Order ID: {{id}}</h2>
                 <p>Amount Due: {{amountDue}}</p>
             </div>
         {{/each}}
     </script>
 </body>
+<script>
+    // Fetch orders from the API
+    fetch('https://pet-shop.buckhill.com.hr/api/v1/orders', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            // Include any necessary API keys or tokens here
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Assuming the API returns an object with an `orders` array
+        const orders = data.orders;
+        renderOrders(orders);
+    })
+    .catch(error => console.error('Error fetching orders:', error));
+
+    function renderOrders(orders) {
+        // Get the template from the HTML document
+        const templateSource = document.getElementById('orders-template').innerHTML;
+        const template = Handlebars.compile(templateSource);
+
+        // Pass the orders data to the template
+        const compiledHtml = template({orders});
+
+        // Insert the compiled HTML into the DOM
+        document.getElementById('orders-container').innerHTML = compiledHtml;
+    }
+</script>
 </html>
