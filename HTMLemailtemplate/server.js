@@ -17,43 +17,30 @@ app.listen(8080, () => {
     console.log('Server started on port', 8080);
   });
 
+
+// Axios instance for API requests
+const apiClient = axios.create({
+    baseURL: 'https://pet-shop.buckhill.com.hr/api/v1',
+    headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+    }
+});
+
 // Function to log in and get a bearer token using axios
 async function loginAndGetBearerToken() {
-    const apiUrl = 'https://pet-shop.buckhill.com.hr/api/v1/user/login';
-    const email = 'cole.joan@example.net';
-    const password = 'userpassword';
-  
     try {
-      const response = await axios.post(apiUrl, {
-        email,
-        password
-      }, {
-        headers: {
-          'Accept': '*/*',
-          'Content-Type': 'application/json'
-        }
-      });
-      //console.log('Response:', response);
-      // Check response status for success (usually 200 or 201)
-      if (response.status !== 200) {
-        console.error('Login failed:', response.statusText);
-        return undefined; // Or throw an error
-      }
-  
-      const token = response.data.data.token;
-  
-      if (!token) {
-        console.error('Token not found in response.');
-        return undefined; // Or throw an error
-      }
-  
-      return token;
-  
+        const response = await apiClient.post('/user/login', {
+            email: process.env.EMAIL, // Use environment variables
+            password: process.env.PASSWORD
+        });
+        return response.data.data.token;
     } catch (error) {
-      console.error('Error during login:', error);
-      return undefined;
+        console.error('Error during login:', error);
+        return undefined;
     }
-  }
+}
+
   //using the function
   loginAndGetBearerToken()
     .then(token => {
@@ -68,27 +55,16 @@ async function loginAndGetBearerToken() {
 
 // Function to fetch data from the API using the bearer token
 async function getOrders(bearerToken) {
-    const url = 'https://pet-shop.buckhill.com.hr/api/v1/orders';
-    const headers = {
-      'accept': '*/*',
-      'Authorization': `Bearer ${bearerToken}`,
-      'X-CSRF-TOKEN': '', // Replace with the actual CSRF token if required
-    };
-  
     try {
-      const response = await axios.get(url, { headers });
-  
-      if (response.status === 200) {
-        return response.data; // Assuming the orders data is in the response body
-      } else {
-        console.error('Failed to retrieve orders:', response.statusText);
-        return undefined; // Or throw an error
-      }
+        const response = await apiClient.get('/orders', {
+            headers: { 'Authorization': `Bearer ${bearerToken}` }
+        });
+        return response.data;
     } catch (error) {
-      console.error('Error during order retrieval:', error);
-      return undefined; // Or throw an error
+        console.error('Error during order retrieval:', error);
+        return undefined;
     }
-  }
+}
   
 //   (async () => {
 //     try {
