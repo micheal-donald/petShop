@@ -6,16 +6,21 @@
 </style>
 
     <img src="header.png" alt="Image Example">
-    <p>Dear {{purchase.customerName}},</p>
+    <p>Dear {{data.user.first_name}} {{data.user.last_name}}
+        {{#if data.user.middleName}}
+        {{data.user.middleName}}
+        {{/if}},
+    </p>
 
-    <p>We are contacting you because there is an amount due on your <span class="bold-red">purchase</span></p>
+    <p>We are contacting you because there is an amount due on your purchase</p>
 
-    <p><span class="bold-red">Purchase ID: {{purchase.id}}</span>:</p>
+    <p><span class="bold-red">{{data.uuid}}</span>:</p>
 
 <style>
     .purchase-summary {
         width: 100%;
         border-collapse: collapse;
+        margin: 0 auto;
     }
     .purchase-summary th,
     .purchase-summary td {
@@ -56,11 +61,11 @@
 
 
 
-    <p>According to our records, the amount due is <span class="bold-red">{{purchase.amountDue}} Kn</span>. Please click on the next button to pay this difference:</p>
+    <p>According to our records, the amount due is <span class="bold-red">{{data.amount}} Kn</span>. Please click on the next button to pay this difference:</p>
 
     <!-- Button to Pay Now -->
     <!-- Assuming you have a URL stored in your data for the checkout page -->
-    <p><a href="{{checkoutUrl}}" target="_blank" style="background-color: red; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">PAY NOW</a></p>
+    <p><a href="https://pet-shop.buckhill.com.hr/checkout" target="_blank" style="background-color: red; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">PAY NOW</a></p>
 
     <p>If you have any other concerns please contact our technical support team.</p>
 

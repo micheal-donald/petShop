@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const axios = require('axios');
@@ -27,12 +28,13 @@ const apiClient = axios.create({
     }
 });
 
+
 // Function to log in and get a bearer token using axios
-async function loginAndGetBearerToken() {
+async function loginAndGetBearerToken(_url,_email,_password) {
     try {
-        const response = await apiClient.post('/user/login', {
-            email: process.env.EMAIL, // Use environment variables
-            password: process.env.PASSWORD
+        const response = await apiClient.post(_url, {
+            email:_email,//process.env.EMAIL, // Use environment variables
+            password:_password //process.env.PASSWORD
         });
         return response.data.data.token;
     } catch (error) {
@@ -41,17 +43,16 @@ async function loginAndGetBearerToken() {
     }
 }
 
-  //using the function
-  loginAndGetBearerToken()
+  //using the function to log into admin
+  loginAndGetBearerToken('/admin/login',process.env.ADMIN_EMAIL,process.env.ADMIN_PASSWORD)
     .then(token => {
       if (token) {
-        console.log('Received Token:', token);
+        console.log('Received Admin Token');
       } else {
-        console.log('No token received', token);
+        console.log('No token Admin received');
       }
     })
     .catch(error => console.error(error));
-
 
 // Function to fetch data from the API using the bearer token
 async function getOrders(bearerToken) {
@@ -71,51 +72,55 @@ async function getOrders(bearerToken) {
 //       const token = await loginAndGetBearerToken(); // Get the bearer token
 //       const orders = await getOrders(token);
 //       //console.log(orders); // The retrieved orders data
-//       const mostRecentOrder = orders.data[0];
+//       const randomOrder  = orders.data[0];
 //       //get most recent uid
-//         console.log('Most recent order:', mostRecentOrder.uuid);
+//         console.log('Most recent order:', randomOrder .uuid);
 //     } catch (error) {
 //       console.error('Error:', error);
 //     }
 //   })();
 async function getMostRecentOrderUUID() {
-    try {
-      const token = await loginAndGetBearerToken(); // Get the bearer token
-      const orders = await getOrders(token);
-  
-      const mostRecentOrder = orders.data[0]; // Assuming newest first in 'data' array
-  
-      if (mostRecentOrder) {
-        return mostRecentOrder.uuid; // Return the UUID of the most recent order
-      } else {
-        console.error("No orders found in the data.");
-        return null; // Or throw an error if appropriate
-      }
-    } catch (error) {
-      console.error('Error retrieving most recent order:', error);
-      throw error; // Re-throw the error for handling outside the function
-    }
-  }
+        try {
+            const token = await loginAndGetBearerToken('/admin/login', process.env.ADMIN_EMAIL, process.env.ADMIN_PASSWORD); // Get the bearer token
+            const orders = await getOrders(token);
+
+            // Filter orders to only those with "payment": null
+            const ordersWithNoPayment = orders.data.filter(order => order.payment === null);
+            console.log(ordersWithNoPayment.length)
+            if (ordersWithNoPayment.length > 0) {
+            // To get a random order UUID, ensure there's at least one order
+            const randomIndex = Math.floor(Math.random() * ordersWithNoPayment.length);
+            //console.log(orders.length)
+            const randomOrder  = ordersWithNoPayment[randomIndex];
+    
+            if (randomOrder ) {
+            return randomOrder .uuid; // Return the UUID of the most recent order
+            } else {
+            console.error("No orders found in the data.");
+            return null; // Or throw an error if appropriate
+            }
+            }
+            
+        } catch (error) {
+            console.error('Error retrieving order UUID:', error);
+            throw error; // Re-throw the error for handling outside the function
+        }
+        
+}
   
 // Function to fetch data from the API using the bearer token
 async function getOrderData(uuid, token) {
     try {
-        const response = await fetch(`https://pet-shop.buckhill.com.hr/api/v1/order/${uuid}`, {
-            method: 'GET',
+        const response = await axios.get(`https://pet-shop.buckhill.com.hr/api/v1/order/${uuid}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
 
-        if (!response.ok) {
-            throw new Error(`Error fetching order: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log('Order data:', data);
-        return data;
+        console.log('Order data:', response.data);
+        return response.data;
     } catch (error) {
-        console.error(`Error fetching order ${uuid}:`, error.message);
+        console.error(`Error fetching order ${uuid}:`, error);
         return null;
     }
 }
@@ -124,7 +129,7 @@ async function getOrderData(uuid, token) {
 
 app.get('/', async (req, res) => {
     try {
-        const token = await loginAndGetBearerToken();
+        const token = await loginAndGetBearerToken('/admin/login',process.env.ADMIN_EMAIL,process.env.ADMIN_PASSWORD);
         if (!token) {
             res.status(500).send('Failed to log in or obtain token.');
             return;
