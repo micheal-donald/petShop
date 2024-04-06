@@ -34,8 +34,8 @@ Create a .env file in the root of your project to store your environment variabl
 
 ```env
 
-ADMIN_EMAIL=youradminemail@example.com
-ADMIN_PASSWORD=youradminpassword
+ADMIN_EMAIL=admin@buckhill.co.uk
+ADMIN_PASSWORD=admin
 ```
 
 ### 4. Start the Application
@@ -45,4 +45,4 @@ Run the application using npm:
 npm start
 ```
 ### 5. Accessing the Application
-Once the application is running, you can access it by navigating to http://localhost:8080 in your web browser.
+Once the application is running, you can access it by navigating to (http://localhost:8080) in your web browser.
