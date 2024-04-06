@@ -79,14 +79,18 @@ async function getOrders(bearerToken) {
 //       console.error('Error:', error);
 //     }
 //   })();
-async function getMostRecentOrderUUID() {
+async function getRandomOrderUUID() {
         try {
             const token = await loginAndGetBearerToken('/admin/login', process.env.ADMIN_EMAIL, process.env.ADMIN_PASSWORD); // Get the bearer token
             const orders = await getOrders(token);
 
             // Filter orders to only those with "payment": null
             const ordersWithNoPayment = orders.data.filter(order => order.payment === null);
-            console.log(ordersWithNoPayment.length)
+            //console.log(ordersWithNoPayment.length)
+            //Filter orders with pending payment
+            const ordersWithPendingPayment = orders.data.filter(order => order.order_status.title === 'pending');
+            //console.log(ordersWithNoPayment.length)
+            
             if (ordersWithNoPayment.length > 0) {
             // To get a random order UUID, ensure there's at least one order
             const randomIndex = Math.floor(Math.random() * ordersWithNoPayment.length);
@@ -137,7 +141,7 @@ app.get('/', async (req, res) => {
 
         // Use a valid UUID for an order
         //const orderUuid = '3bea3cf0-e41c-3e65-ae7a-a906ae4c0e6b';
-        const orderUuid = await getMostRecentOrderUUID();
+        const orderUuid = await getRandomOrderUUID();
         const orderData = await getOrderData(orderUuid, token);
 
         if (!orderData) {
