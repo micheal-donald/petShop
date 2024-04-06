@@ -13,36 +13,36 @@ Follow these steps to get the application running on your local machine:
 ### 1. Clone the Repository
 First, clone the repository to your local machine using Git:
 
-''' bash
+``` bash
 
 git clone https://github.com/micheal-donald/petShop
 cd htmlemailtemplate 
-'''
+```
 
 
 ### 2. Install Dependencies
 Next, install the project's dependencies using npm:
 
-'''bash
+```bash
 
 npm install
-'''
+```
 This command reads the package.json file and installs all the necessary dependencies listed under dependencies.
 
 ### 3. Set Up Environment Variables
 Create a .env file in the root of your project to store your environment variables. For example:
 
-'''env
+```env
 
 ADMIN_EMAIL=youradminemail@example.com
 ADMIN_PASSWORD=youradminpassword
-'''
+```
 
 ### 4. Start the Application
 Run the application using npm:
 
-'''bash
+```bash
 npm start
-'''
+```
 ### 5. Accessing the Application
 Once the application is running, you can access it by navigating to http://localhost:8080 in your web browser.
